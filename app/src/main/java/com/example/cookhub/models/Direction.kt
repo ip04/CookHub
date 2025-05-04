@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
             entity = Recipe::class,
             parentColumns = ["id"],
             childColumns = ["recipeId"],
-            onDelete = ForeignKey.CASCADE // מחיקה של מתכון תמחק את ההוראות
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

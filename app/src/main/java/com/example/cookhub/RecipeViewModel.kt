@@ -58,25 +58,3 @@ class RecipeViewModel(application: Application): AndroidViewModel(application) {
     }
 
 }
-
-/*
-    fun addFullRecipe(recipe: Recipe, ingredients: List<Ingredient>, directions: List<Direction>) {
-        repository.addFullRecipe(recipe, ingredients, directions)
-    }
-
-    fun addIngredients(ingredients: List<Ingredient>) {
-        repository.addIngredients(ingredients)
-    }
-
-    fun addDirections(directions: List<Direction>) {
-        repository.addDirections(directions)
-    }
-
-    fun addRecipe(recipe: Recipe){
-        repository.addRecipe(recipe)
-    }
-
-    fun deleteRecipe(recipe: Recipe){
-        repository.deleteRecipe(recipe)
-    }
- */
