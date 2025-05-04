@@ -15,4 +15,10 @@
     <string name="select_difficulty">רמת קושי</string>
     <string name="discover_save_and_share_your_favorite_recipes">גלה, צור ושתף את המתכונים האהובים עלייך</string>
     <string name="get_started">בואו נתחיל!</string>
+    <string name="dialog_title">אזהרה!</string>
+    <string name="dialog_text">האם אתה רוצה למחוק את רשימת המתכונים?</string>
+    <string name="dialog_yes">כן</string>
+    <string name="dialog_no">לא</string>
+    <string name="please_fill_all_the_fields">בבקשה תמלא את כל התאים החסרים</string>
+    <string name="all_recipes_deleted">כל המתכונים נמחקו</string>
 </resources>

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -56,15 +57,30 @@ class AddRecipeFragment: Fragment() {
         _binding = AddRecipeLayoutBinding.inflate(inflater, container, false)
 
         binding.finishBtn.setOnClickListener {
-            val recipe = Recipe(
-                binding.recipeTitle.text.toString(),
-                binding.authorName.text.toString(),
-                binding.spinnerDifficulty.selectedItem.toString(),
-                "🕒 ${binding.prepTime.text.toString()} mins",
-                imageUri.toString())
-            viewModel.saveFullRecipe(recipe, ingredientsList, directionsList)
-            findNavController().navigate(R.id.action_addRecipeFragment2_to_dashboardFragment)
 
+            val title = binding.recipeTitle.text.toString()
+            val author = binding.authorName.text.toString()
+            val difficulty = binding.spinnerDifficulty.selectedItem.toString()
+            val time = binding.prepTime.text.toString()
+            val timeStr = "🕒 ${binding.prepTime.text.toString()} mins"
+            val imageUriStr = imageUri.toString()
+
+            val condition = title.isNotEmpty() && author.isNotEmpty() && difficulty.isNotEmpty() && time.isNotEmpty()
+
+            if (condition){
+                val recipe = Recipe(
+                    title,
+                    author,
+                    difficulty,
+                    timeStr,
+                    imageUriStr)
+                viewModel.saveFullRecipe(recipe, ingredientsList, directionsList)
+                findNavController().navigate(R.id.action_addRecipeFragment2_to_dashboardFragment)
+            }else{
+                Toast.makeText(requireContext(),
+                    getString(R.string.please_fill_all_the_fields),
+                    Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.addIngredient.setOnClickListener {

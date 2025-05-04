@@ -6,6 +6,7 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.cookhub.R
 import com.example.cookhub.models.Recipe
 import com.example.cookhub.databinding.RecipeCardLayoutBinding
 
@@ -39,7 +40,12 @@ class RecipeAdapter(val recipes: List<Recipe>, val callBack: RecipeListener): Re
             binding.itemAuthor.text = recipe.author
             binding.itemTime.text = recipe.time
             binding.itemDifficulty.text = recipe.difficulty
-            Glide.with(binding.root).load(recipe.photo).circleCrop().into(binding.itemImage)
+//            Glide.with(binding.root).load(recipe.photo).circleCrop().into(binding.itemImage)
+            Glide.with(binding.root)
+                .load(recipe.photo)
+                .circleCrop()
+                .error(R.mipmap.ic_launcher)
+                .into(binding.itemImage)
         }
     }
 

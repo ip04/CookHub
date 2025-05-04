@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -31,6 +33,39 @@ class DashboardFragment: Fragment() {
         _binding = DashboardLayoutBinding.inflate(inflater, container, false)
         binding.fabAddRecipe.setOnClickListener{
             findNavController().navigate(R.id.action_dashboardFragment_to_addRecipeFragment2)
+        }
+
+        binding.deleteIV.setOnClickListener {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            val title = TextView(requireContext()).apply {
+                text = getString(R.string.dialog_title)
+                setTextColor(resources.getColor(android.R.color.holo_red_dark, null))
+                textSize = 20f
+                setPadding(32, 48, 32, 24) // ריווח פנימי
+            }
+            builder.apply {
+                setCustomTitle(title)
+                setMessage(R.string.dialog_text)
+                setCancelable(false)
+                setIcon(R.drawable.baseline_delete_24)
+                setPositiveButton(getString(R.string.dialog_yes)){ _, _ ->
+                    viewModel.deleteAllRecipes()
+                    Toast.makeText(requireContext(),
+                        getString(R.string.all_recipes_deleted), Toast.LENGTH_SHORT).show()
+                }
+
+                setNegativeButton(getString(R.string.dialog_no)){ dialog, _->
+                    dialog.dismiss()
+                }
+            }
+            val dialog = builder.create()
+            dialog.show()
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                resources.getColor(android.R.color.holo_red_dark, null)
+            )
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                resources.getColor(android.R.color.holo_blue_dark, null)
+            )
         }
         return binding.root
     }

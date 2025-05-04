@@ -34,6 +34,10 @@ class RecipeRepository(application: Application) {
         recipeDao?.deleteRecipe(recipe)
     }
 
+    suspend fun deleteAllRecipes(){
+        recipeDao?.deleteAllRecipes()
+    }
+
     suspend fun addFullRecipe(recipe: Recipe, ingredients: List<Ingredient>, directions: List<Direction>) {
         val recipeId = recipeDao?.insertRecipe(recipe)?.toInt()
             ?: throw IllegalStateException("Recipe insertion failed")

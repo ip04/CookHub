@@ -12,7 +12,17 @@
     <string name="enter_direction">Enter Direction</string>
     <string name="finish">Finish</string>
     <string name="select_difficulty">select difficulty</string>
+
     <string name="title_home_screen" translatable="false">It\'s\nCooking\nTime!</string>
     <string name="discover_save_and_share_your_favorite_recipes">Discover, save, and share your favorite recipes</string>
     <string name="get_started">Get Started</string>
+
+    <string name="please_fill_all_the_fields">Please Fill all the Fields</string>
+
+
+    <string name="dialog_title">Warning!</string>
+    <string name="dialog_text">Do you want to the delete all the recipes?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="all_recipes_deleted">All recipes deleted</string>
 </resources>
