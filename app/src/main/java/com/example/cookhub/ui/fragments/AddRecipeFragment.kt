@@ -65,7 +65,12 @@ class AddRecipeFragment: Fragment() {
             val timeStr = "🕒 ${binding.prepTime.text.toString()} mins"
             val imageUriStr = imageUri.toString()
 
-            val condition = title.isNotEmpty() && author.isNotEmpty() && difficulty.isNotEmpty() && time.isNotEmpty()
+            val condition = title.isNotEmpty() &&
+                    author.isNotEmpty() &&
+                    difficulty.isNotEmpty() &&
+                    time.isNotEmpty() &&
+                    ingredientsList.isNotEmpty() &&
+                    directionsList.isNotEmpty()
 
             if (condition){
                 val recipe = Recipe(
