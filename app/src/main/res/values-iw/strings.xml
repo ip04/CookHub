@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CookHub</string>
+    <string name="ingredients">מרכיבים</string>
+    <string name="directions">הוראות</string>
+    <string name="all_recipes">כל המתכונים</string>
+    <string name="add_edit_image">בחירת תמונה</string>
+    <string name="recipe_title">שם המתכון</string>
+    <string name="author_name">שם המחבר</string>
+    <string name="preparation_time_minutes">זמן הכנה (בדקות)</string>
+    <string name="enter_ingredient">הכנס מצרכים</string>
+    <string name="add">הוספה</string>
+    <string name="enter_direction">הכנס הוראות</string>
+    <string name="finish">שמור</string>
+    <string name="select_difficulty">רמת קושי</string>
+    <string name="discover_save_and_share_your_favorite_recipes">גלה, צור ושתף את המתכונים האהובים עלייך</string>
+    <string name="get_started">בואו נתחיל!</string>
+</resources>
