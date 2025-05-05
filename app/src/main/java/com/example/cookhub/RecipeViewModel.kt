@@ -41,6 +41,26 @@ class RecipeViewModel(application: Application): AndroidViewModel(application) {
         repository.deleteRecipe(recipe)
     }
 
+    fun saveFullRecipe(
+        recipe: Recipe,
+        ingredients: List<Ingredient>,
+        directions: List<Direction>
+    ) {
+        viewModelScope.launch {
+            repository.addFullRecipe(recipe, ingredients, directions)
+        }
+    }
+
+    fun updateFullRecipe(
+        recipe: Recipe,
+        ingredients: List<Ingredient>,
+        directions: List<Direction>
+    ) {
+        viewModelScope.launch {
+            repository.updateFullRecipe(recipe, ingredients, directions)
+        }
+    }
+
 
     fun deleteRecipeAsync(recipe: Recipe) {
         viewModelScope.launch {
@@ -51,16 +71,6 @@ class RecipeViewModel(application: Application): AndroidViewModel(application) {
     fun deleteAllRecipes() {
         viewModelScope.launch {
             repository.deleteAllRecipes()
-        }
-    }
-
-    fun saveFullRecipe(
-        recipe: Recipe,
-        ingredients: List<Ingredient>,
-        directions: List<Direction>
-    ) {
-        viewModelScope.launch {
-            repository.addFullRecipe(recipe, ingredients, directions)
         }
     }
 

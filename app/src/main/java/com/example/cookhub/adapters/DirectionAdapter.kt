@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cookhub.models.Direction
 import com.example.cookhub.databinding.DirectionCardLayoutBinding
 
-class DirectionAdapter(val directions: List<Direction>): RecyclerView.Adapter<DirectionAdapter.DirectionViewHolder>() {
+class DirectionAdapter(var directions: List<Direction>): RecyclerView.Adapter<DirectionAdapter.DirectionViewHolder>() {
 
     class DirectionViewHolder(private val binding: DirectionCardLayoutBinding) :RecyclerView.ViewHolder(binding.root){
         fun bind(direction: Direction, position: Int){
@@ -31,4 +31,8 @@ class DirectionAdapter(val directions: List<Direction>): RecyclerView.Adapter<Di
 
     override fun getItemCount(): Int = directions.size
 
+    fun updateDirections(newDirections: List<Direction>) {
+        directions = newDirections
+        notifyDataSetChanged()
+    }
 }

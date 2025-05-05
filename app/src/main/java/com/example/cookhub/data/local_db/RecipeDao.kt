@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -40,9 +39,18 @@ interface RecipeDao {
     suspend fun deleteAllRecipes()
 
     @Update
+    suspend fun updateRecipe(recipe: Recipe)
+
+    @Update
     suspend fun updateIngredients(ingredients: List<Ingredient>)
 
     @Update
     suspend fun updateDirections(directions: List<Direction>)
+
+    @Delete
+    suspend fun deleteIngredients(ingredients: List<Ingredient>)
+
+    @Delete
+    suspend fun deleteDirections(directions: List<Direction>)
 }
 

@@ -65,10 +65,8 @@ class DetailRecipeFragment: Fragment() {
                     .circleCrop()
                     .error(R.mipmap.ic_launcher)
                     .into(binding.recipeImage)
-                ingredientAdapter = IngredientAdapter(recipeWithDetails.ingredients)
-                directionAdapter = DirectionAdapter(recipeWithDetails.directions)
-                binding.recyclerIngredients.adapter = ingredientAdapter
-                binding.recyclerDirections.adapter = directionAdapter
+                ingredientAdapter.updateIngredients(recipeWithDetails.ingredients)
+                directionAdapter.updateDirections(recipeWithDetails.directions)
             } else {
                 Toast.makeText(context, "Failed to load recipe details", Toast.LENGTH_SHORT).show()
             }

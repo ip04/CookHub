@@ -48,4 +48,29 @@ class RecipeRepository(application: Application) {
         recipeDao?.insertIngredients(updatedIngredients)
         recipeDao?.insertDirections(updatedDirections)
     }
+
+    suspend fun updateFullRecipe(recipe: Recipe, ingredients: List<Ingredient>, directions: List<Direction>) {
+        recipeDao?.updateRecipe(recipe)
+        val existingDetails = recipeDao?.getRecipeWithDetails(recipe.id)
+        if (existingDetails != null) {
+            val existingIngredients = existingDetails.ingredients
+            val existingDirections = existingDetails.directions
+            // מחיקת רשומות שהוסרו
+            val ingredientsToDelete = existingIngredients.filter { existing ->
+                ingredients.none { it.id == existing.id }
+            }
+            val directionsToDelete = existingDirections.filter { existing ->
+                directions.none { it.id == existing.id }
+            }
+            recipeDao?.deleteIngredients(ingredientsToDelete)
+            recipeDao?.deleteDirections(directionsToDelete)
+        }
+        // עדכון והוספת רשומות
+        ingredients.forEach { it.recipeId = recipe.id }
+        directions.forEach { it.recipeId = recipe.id }
+        recipeDao?.updateIngredients(ingredients.filter { it.id != 0 }) // עדכון מצרכים קיימים
+        recipeDao?.insertIngredients(ingredients.filter { it.id == 0 }) // הוספת מצרכים חדשים
+        recipeDao?.updateDirections(directions.filter { it.id != 0 }) // עדכון שלבים קיימים
+        recipeDao?.insertDirections(directions.filter { it.id == 0 }) // הוספת שלבים חדשים
+    }
 }

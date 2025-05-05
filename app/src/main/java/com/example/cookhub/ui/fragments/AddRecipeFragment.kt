@@ -25,16 +25,23 @@ import com.example.cookhub.RecipeViewModel
 import com.example.cookhub.adapters.DirectionAdapter
 import com.example.cookhub.adapters.IngredientAdapter
 import com.example.cookhub.databinding.AddRecipeLayoutBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddRecipeFragment: Fragment() {
     private var _binding: AddRecipeLayoutBinding? = null
     private val binding get() = _binding!!
+    private var recipeId: Int? = null
 
     private lateinit var ingredientAdapter: IngredientAdapter
     private lateinit var directionAdapter: DirectionAdapter
 
     private val ingredientsList = mutableListOf<Ingredient>()
     private val directionsList = mutableListOf<Direction>()
+    private var existingIngredients: List<Ingredient> = emptyList()
+    private var existingDirections: List<Direction> = emptyList()
 
     private val viewModel: RecipeViewModel by activityViewModels()
 
@@ -55,9 +62,65 @@ class AddRecipeFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = AddRecipeLayoutBinding.inflate(inflater, container, false)
+        recipeId = arguments?.getInt("recipeId")
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupSpinner(binding.spinnerDifficulty, difficulties)
+
+        //Define Adapters for Ingredients and Directions
+        ingredientAdapter = IngredientAdapter(ingredientsList)
+        binding.recyclerIngredients.adapter = ingredientAdapter
+        binding.recyclerIngredients.layoutManager = LinearLayoutManager(requireContext())
+
+        directionAdapter = DirectionAdapter(directionsList)
+        binding.recyclerDirections.adapter = directionAdapter
+        binding.recyclerDirections.layoutManager = LinearLayoutManager(requireContext())
+
+        //In edit form check if data already exist and reload
+        recipeId?.let { id ->
+            CoroutineScope(Dispatchers.Main).launch {
+                val recipeWithDetails = withContext(Dispatchers.IO) {
+                    viewModel.getRecipeWithDetails(id)
+                }
+                recipeWithDetails?.let { details ->
+                    binding.recipeTitle.setText(details.recipe.title)
+                    binding.authorName.setText(details.recipe.author)
+
+                    val difficultyIndex = difficulties.indexOf(details.recipe.difficulty)
+                    if (difficultyIndex >= 0) {
+                        binding.spinnerDifficulty.setSelection(difficultyIndex)
+                    }
+
+                    //reload time and remove emojis and "mins"
+                    val timeStr = details.recipe.time?.replace("🕒 ", "")?.replace(" mins", "")
+                    binding.prepTime.setText(timeStr)
+
+                    //reload photo if exist
+                    if (details.recipe.photo?.isNotEmpty() == true) {
+                        imageUri = Uri.parse(details.recipe.photo)
+                        binding.recipeImage.setImageURI(imageUri)
+                    }
+
+                    //reload Ingredients and Directions
+                    existingIngredients = details.ingredients
+                    existingDirections = details.directions
+                    ingredientsList.clear()
+                    ingredientsList.addAll(details.ingredients)
+                    directionsList.clear()
+                    directionsList.addAll(details.directions)
+                    ingredientAdapter.notifyDataSetChanged()
+                    directionAdapter.notifyDataSetChanged()
+
+                    binding.finishBtn.text = getString(R.string.update_recipe)
+                }
+            }
+        }
+
 
         binding.finishBtn.setOnClickListener {
-
             val title = binding.recipeTitle.text.toString()
             val author = binding.authorName.text.toString()
             val difficulty = binding.spinnerDifficulty.selectedItem.toString()
@@ -78,8 +141,19 @@ class AddRecipeFragment: Fragment() {
                     author,
                     difficulty,
                     timeStr,
-                    imageUriStr)
-                viewModel.saveFullRecipe(recipe, ingredientsList, directionsList)
+                    imageUriStr).apply {
+                    if (recipeId != null) id = recipeId!! // הגדרת ה-id עבור עדכון
+                }
+
+                if (recipeId == null) {
+                    //saving new recipe
+                    viewModel.saveFullRecipe(recipe, ingredientsList, directionsList)
+                } else {
+                    //updating recipe
+                    ingredientsList.forEach { it.recipeId = recipeId!! }
+                    directionsList.forEach { it.recipeId = recipeId!! }
+                    viewModel.updateFullRecipe(recipe, ingredientsList, directionsList)
+                }
                 findNavController().navigate(R.id.action_addRecipeFragment2_to_dashboardFragment)
             }else{
                 Toast.makeText(requireContext(),
@@ -91,7 +165,9 @@ class AddRecipeFragment: Fragment() {
         binding.addIngredient.setOnClickListener {
             val ingredientName = binding.ingredientsEdittext.text.toString()
             if (ingredientName.isNotEmpty()) {
-                val newIngredient = Ingredient(ingredientName, 0) // recipeId עדיין לא קיים
+                val newIngredient = Ingredient(
+                    name = ingredientName,
+                    recipeId = recipeId ?: 0)
                 ingredientsList.add(newIngredient)
                 ingredientAdapter.notifyItemInserted(ingredientsList.size - 1)
                 binding.ingredientsEdittext.text.clear()
@@ -101,7 +177,9 @@ class AddRecipeFragment: Fragment() {
         binding.addDirection.setOnClickListener {
             val directionName = binding.directionEdittext.text.toString()
             if (directionName.isNotEmpty()){
-                val newDirection = Direction(directionName, 0)
+                val newDirection = Direction(
+                    description = directionName,
+                    recipeId = recipeId ?: 0)
                 directionsList.add(newDirection)
                 directionAdapter.notifyItemInserted(directionsList.size-1)
                 binding.directionEdittext.text.clear()
@@ -111,22 +189,8 @@ class AddRecipeFragment: Fragment() {
         binding.pickImageBtn.setOnClickListener {
             pickImageLauncher.launch(arrayOf("image/*"))
         }
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupSpinner(binding.spinnerDifficulty, difficulties)
-
-        ingredientAdapter = IngredientAdapter(ingredientsList)
-        binding.recyclerIngredients.adapter = ingredientAdapter
-        binding.recyclerIngredients.layoutManager = LinearLayoutManager(requireContext())
-
-        directionAdapter = DirectionAdapter(directionsList)
-        binding.recyclerDirections.adapter = directionAdapter
-        binding.recyclerDirections.layoutManager = LinearLayoutManager(requireContext())
-
+        // Define Swipe-to-Delete for Ingredients and Direction
         attachSwipeToDelete(binding.recyclerDirections, directionsList) { pos ->
             directionsList.removeAt(pos)
         }
@@ -162,12 +226,6 @@ class AddRecipeFragment: Fragment() {
         }).attachToRecyclerView(recyclerView)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
     private fun setupSpinner(spinner: Spinner, items: List<String>) {
         val adapter = ArrayAdapter(
             requireContext(),
@@ -177,6 +235,11 @@ class AddRecipeFragment: Fragment() {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

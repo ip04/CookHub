@@ -84,8 +84,16 @@ class DashboardFragment: Fragment() {
                 }
 
                 override fun onRecipeLongClicked(index: Int) {
-                    Toast.makeText(requireContext(), recipes[index].title, Toast.LENGTH_SHORT).show()
-
+                    val recipe = recipes?.getOrNull(index)
+                    if(recipe != null){
+                        findNavController().navigate(
+                            R.id.action_dashboardFragment_to_addRecipeFragment2,
+                            bundleOf("recipeId" to recipe.id)
+                        )
+                    }else{
+                        Toast.makeText(requireContext(), recipes[index].title, Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             })
             binding.recipeCardsRecyclerView.adapter = adapter

@@ -25,4 +25,5 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="all_recipes_deleted">All recipes deleted</string>
+    <string name="update_recipe">Update Recipe</string>
 </resources>

@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
 )
 data class Direction(
     val description:String,
-    val recipeId:Int
+    var recipeId:Int
 ){
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0

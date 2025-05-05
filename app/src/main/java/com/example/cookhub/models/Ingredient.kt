@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 )
 data class Ingredient(
     val name: String,
-    val recipeId: Int
+    var recipeId: Int
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
